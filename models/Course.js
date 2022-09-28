@@ -20,6 +20,10 @@ const CourseSchema = new Schema({
     type: String,
     unique: true,
   },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category', //referans vermek istedigim modelin ismini yazıyorum
+  },
 });
 
 //Course modelim yaratılmadan once slug alanımı doldurmam gerekiyor
