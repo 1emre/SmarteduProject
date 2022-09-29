@@ -24,6 +24,10 @@ const CourseSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category', //referans vermek istedigim modelin ismini yazıyorum
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 //Course modelim yaratılmadan once slug alanımı doldurmam gerekiyor
