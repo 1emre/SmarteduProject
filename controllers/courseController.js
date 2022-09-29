@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Category = require('../models/Category');
+const User = require('../models/User');
 
 exports.getAllCourses = async (req, res) => {
   try {
@@ -51,6 +52,21 @@ exports.createCourse = async (req, res) => {
     });
 
     res.status(201).redirect('/courses');
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
+exports.enrollCourse = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userID);
+    await user.courses.push({ _id: req.body.course_id }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
+    await user.save();
+
+    res.status(200).redirect('/users/dashboard');
   } catch (error) {
     res.status(400).json({
       status: 'fail',
