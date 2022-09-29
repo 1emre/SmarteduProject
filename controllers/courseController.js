@@ -27,12 +27,14 @@ exports.getAllCourses = async (req, res) => {
 
 exports.getCourse = async (req, res) => {
   try {
+    const user = await User.findById(req.session.userID);
     const course = await Course.findOne({ slug: req.params.slug }).populate(
       'user'
     ); // course modelimin icinde user ı modelim refere edildigi icin joinleyip course icinden usera ulaştım.
     res.status(200).render('course', {
       course,
       page_name: 'courses',
+      user,
     });
   } catch (error) {
     res.status(400).json({
@@ -64,6 +66,21 @@ exports.enrollCourse = async (req, res) => {
   try {
     const user = await User.findById(req.session.userID);
     await user.courses.push({ _id: req.body.course_id }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
+    await user.save();
+
+    res.status(200).redirect('/users/dashboard');
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
+exports.releaseCourse = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userID);
+    await user.courses.pull({ _id: req.body.course_id }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
     await user.save();
 
     res.status(200).redirect('/users/dashboard');
