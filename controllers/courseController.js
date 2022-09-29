@@ -9,7 +9,7 @@ exports.getAllCourses = async (req, res) => {
     if (categorySlug) {
       filter = { category: category._id }; // burdaki category Course modeline ait olan parametre
     }
-    const courses = await Course.find(filter); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
+    const courses = await Course.find(filter).sort('-createDate'); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
     const categories = await Category.find();
     res.status(200).render('courses', {
       courses,
@@ -43,10 +43,7 @@ exports.createCourse = async (req, res) => {
   try {
     const course = await Course.create(req.body);
 
-    res.status(201).json({
-      status: 'success',
-      course,
-    });
+    res.status(201).redirect('/courses');
   } catch (error) {
     res.status(400).json({
       status: 'fail',
