@@ -5,12 +5,26 @@ const User = require('../models/User');
 exports.getAllCourses = async (req, res) => {
   try {
     const categorySlug = req.query.categories; // linkten gelen categories parametresine karsılık değeri alıyorum.
+    const query = req.query.search;
     const category = await Category.findOne({ slug: categorySlug }); // slug seklinde gelicege icin oradan esledim
     let filter = {};
     if (categorySlug) {
       filter = { category: category._id }; // burdaki category Course modeline ait olan parametre
     }
-    const courses = await Course.find(filter).sort('-createDate'); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
+    if (query) {
+      filter = { name: query };
+    }
+    if (!query && !categorySlug) {
+      (filter.name = ''), (filter.category = null);
+    }
+    const courses = await Course.find({
+      $or: [
+        { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } }, // searchden gelen kısmı kucuk harfe cevir
+        { category: filter.category },
+      ],
+    })
+      .sort('-createDate')
+      .populate('user'); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
     const categories = await Category.find();
     res.status(200).render('courses', {
       courses,
@@ -31,10 +45,12 @@ exports.getCourse = async (req, res) => {
     const course = await Course.findOne({ slug: req.params.slug }).populate(
       'user'
     ); // course modelimin icinde user ı modelim refere edildigi icin joinleyip course icinden usera ulaştım.
+    const categories = await Category.find();
     res.status(200).render('course', {
       course,
       page_name: 'courses',
       user,
+      categories,
     });
   } catch (error) {
     res.status(400).json({
