@@ -24,7 +24,7 @@ const app = express();
 //connect DB
 mongoose
   .connect(
-    'mongodb+srv://dpedemirbas:admin@mongode.b9b53vk.mongodb.net/smartedu-db?retryWrites=true&w=majority',
+    'mongodb+srv://dpedemirbas:admin@mongode.b9b53vk.mongodb.net/smartedu-db?retryWrites=true',
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
