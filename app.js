@@ -13,13 +13,25 @@ const userRoute = require('./routes/userRoute');
 const app = express();
 
 //Connect Db
+// mongoose local
+//   .connect('mongodb://localhost/smartedu-db', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => {
+//     console.log('DB Connected Successfully');
+//   });
+//connect DB
 mongoose
-  .connect('mongodb://localhost/smartedu-db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    'mongodb+srv://dpedemirbas:admin@mongode.b9b53vk.mongodb.net/smartedu-db?retryWrites=true&w=majority',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
   .then(() => {
-    console.log('DB Connected Successfully');
+    console.log('DB CONNECTED!');
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
 //Templete Engine
@@ -61,7 +73,7 @@ app.use('/categories', categoryRoute);
 app.use('/users', userRoute);
 
 //const port = 3000; local
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`App started on port ${port}`);
 });
