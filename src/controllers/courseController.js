@@ -1,22 +1,28 @@
 const Course = require('../models/Course');
 const Category = require('../models/Category');
 const User = require('../models/User');
+const { search } = require('../routes/pageRoute');
+
+const searchFilter = (categorySlug, category, query) => {
+  let filter = {};
+  if (categorySlug) {
+    filter = { category: category._id }; // burdaki category Course modeline ait olan parametre
+  }
+  if (query) {
+    filter = { ...filter, name: query };
+  }
+  if (!query && !categorySlug) {
+    (filter.name = ''), (filter.category = null);
+  }
+  return filter;
+};
 
 exports.getAllCourses = async (req, res) => {
   try {
     const categorySlug = req.query.categories; // linkten gelen categories parametresine karsılık değeri alıyorum.
     const query = req.query.search;
     const category = await Category.findOne({ slug: categorySlug }); // slug seklinde gelicege icin oradan esledim
-    let filter = {};
-    if (categorySlug) {
-      filter = { category: category._id }; // burdaki category Course modeline ait olan parametre
-    }
-    if (query) {
-      filter = { name: query };
-    }
-    if (!query && !categorySlug) {
-      (filter.name = ''), (filter.category = null);
-    }
+    let filter = searchFilter(categorySlug, category, query);
     const courses = await Course.find({
       $or: [
         { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } }, // searchden gelen kısmı kucuk harfe cevir

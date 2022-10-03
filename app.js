@@ -5,10 +5,10 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
-const pageRoute = require('./routes/pageRoute');
-const courseRoute = require('./routes/courseRoute');
-const categoryRoute = require('./routes/categoryRoute');
-const userRoute = require('./routes/userRoute');
+const pageRoute = require('./src/routes/pageRoute');
+const courseRoute = require('./src/routes/courseRoute');
+const categoryRoute = require('./src/routes/categoryRoute');
+const userRoute = require('./src/routes/userRoute');
 
 const app = express();
 
@@ -23,10 +23,10 @@ const app = express();
 //   });
 //connect DB
 mongoose
-  .connect(
-    'mongodb+srv://dpedemirbas:admin@mongode.b9b53vk.mongodb.net/smartedu-db?retryWrites=true&w=majority',
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.NODE_ENV_MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log('DB CONNECTED!');
   })
@@ -51,8 +51,7 @@ app.use(
     saveUninitialized: true,
     //store: MongoStore.create({ mongoUrl: 'mongodb://localhost/smartedu-db' }),
     store: MongoStore.create({
-      mongoUrl:
-        'mongodb+srv://dpedemirbas:admin@mongode.b9b53vk.mongodb.net/smartedu-db?retryWrites=true&w=majority',
+      mongoUrl: process.env.NODE_ENV_MONGO_URL,
     }),
   })
 );
