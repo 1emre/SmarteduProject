@@ -1,7 +1,6 @@
 const Course = require('../models/Course');
 const Category = require('../models/Category');
 const User = require('../models/User');
-const { search } = require('../routes/pageRoute');
 
 const searchFilter = (categorySlug, category, query) => {
   let filter = {};
@@ -17,18 +16,22 @@ const searchFilter = (categorySlug, category, query) => {
   return filter;
 };
 
+const csQuery = (filter) => {
+  return {
+    $or: [
+      { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } }, // searchden gelen kısmı kucuk harfe cevir
+      { category: filter.category },
+    ],
+  };
+};
+
 exports.getAllCourses = async (req, res) => {
   try {
     const categorySlug = req.query.categories; // linkten gelen categories parametresine karsılık değeri alıyorum.
     const query = req.query.search;
-    const category = await Category.findOne({ slug: categorySlug }); // slug seklinde gelicege icin oradan esledim
+    const category = await Category.findOne({ slug: categorySlug });
     let filter = searchFilter(categorySlug, category, query);
-    const courses = await Course.find({
-      $or: [
-        { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } }, // searchden gelen kısmı kucuk harfe cevir
-        { category: filter.category },
-      ],
-    })
+    const courses = await Course.find(csQuery(filter))
       .sort('-createDate')
       .populate('user'); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
     const categories = await Category.find();
