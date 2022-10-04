@@ -37,7 +37,7 @@ exports.loginUser = async (req, res) => {
         }
       });
     } else {
-      req.flash('error', 'Your is not exist!');
+      req.flash('error', 'Your user is not exist!');
       res.status(400).redirect('/login');
     }
   } catch (error) {
