@@ -3,10 +3,13 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const Category = require('../models/Category');
 const Course = require('../models/Course');
+const userService = require('../services/userService');
+const categoryService = require('../services/categoryService');
+const courseService = require('../services/courseService');
 
 exports.createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const user = await userService.createUser(req.body);
     res.status(201).redirect('/login');
   } catch (error) {
     const errors = validationResult(req);
@@ -23,8 +26,7 @@ exports.createUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body; //req gelen email ve password aldım
-
-    const user = await User.findOne({ email });
+    const user = await userService.getUserWithEmail(email);
     if (user) {
       bcrypt.compare(password, user.password, (err, same) => {
         if (same) {
@@ -55,14 +57,12 @@ exports.logoutUser = async (req, res) => {
 };
 
 exports.getDashboardPage = async (req, res) => {
-  const user = await User.findOne({ _id: req.session.userID }).populate(
-    'courses'
+  const user = await userService.getUserAndCoursesWithId(req.session.userID);
+  const categories = await categoryService.getAllCategories();
+  const courses = await courseService.getCoursesWithSessionIDSortCD(
+    req.session.userID
   );
-  const categories = await Category.find();
-  const courses = await Course.find({ user: req.session.userID }).sort(
-    '-createDate'
-  );
-  const users = await User.find();
+  const users = await userService.getUsersAll();
   res.status(200).render('dashboard', {
     page_name: 'dashboard',
     user,
@@ -74,8 +74,8 @@ exports.getDashboardPage = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    await User.findByIdAndRemove(req.params.id);
-    await Course.deleteMany({ user: req.params.id });
+    await userService.deleteUserWithID(req.params.id);
+    await courseService.deleteCourseWithID(req.params.id);
     res.status(200).redirect('/users/dashboard');
   } catch (error) {
     res.status(400).json({
