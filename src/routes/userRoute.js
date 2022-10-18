@@ -25,8 +25,8 @@ const validationSelf = () => {
 
 router.route('/signup').post(validationSelf(), authController.createUser); // http://localhost:3000/users/signup
 router.route('/login').post(authController.loginUser); // http://localhost:3000/users/login
-router.route('/logout').get(authController.logoutUser); // http://localhost:3000/users/logout -- login ile farkı login sayfasına giderken pageRoute.js kullanıyor
-router.route('/dashboard').get(authMiddleware, authController.getDashboardPage); // http://localhost:3000/users/dashboard  || login olunmadıysa login sayfasına yönlendirmek icin middleware kullanıyoruz
+router.route('/logout').get(authController.logoutUser); // http://localhost:3000/users/logout
+router.route('/dashboard').get(authMiddleware, authController.getDashboardPage); // http://localhost:3000/users/dashboard
 router.route('/:id').delete(authController.deleteUser);
 
 module.exports = router;

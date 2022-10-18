@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.route('/').get(pageController.getIndexPage);
 router.route('/about').get(pageController.getAboutPage);
-//login ve refister sayfalarına giriş yapıldıgında erişim olmaması icin middleware kullandım
 router
   .route('/register')
   .get(redirectMiddleware, pageController.getRegisterPage);

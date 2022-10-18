@@ -6,17 +6,10 @@ const courseService = require('../services/courseService');
 const userService = require('../services/userService');
 
 const searchFilter = (categorySlug, category, query) => {
-  let filter = {};
-  if (categorySlug) {
-    filter = { category: category._id }; // burdaki category Course modeline ait olan parametre
-  }
-  if (query) {
-    filter = { ...filter, name: query };
-  }
-  if (!query && !categorySlug) {
-    (filter.name = ''), (filter.category = null);
-  }
-  return filter;
+  return {
+    name: query || '',
+    category: categorySlug ? category._id : null,
+  };
 };
 
 exports.getAllCourses = async (req, res) => {

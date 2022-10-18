@@ -22,7 +22,7 @@ const CourseSchema = new Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category', //referans vermek istedigim modelin ismini yazıyorum
+    ref: 'Category',
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,15 +30,12 @@ const CourseSchema = new Schema({
   },
 });
 
-//Course modelim yaratılmadan once slug alanımı doldurmam gerekiyor
 CourseSchema.pre('validate', function (next) {
-  // arrow function kullanmamızın nedenı this kullandıgımız için
   this.slug = slugify(this.name, {
-    //slug a neyi slugify ediceksin name yi
-    lower: true, // name den slug e cevirirken kücült
-    strict: true, // gereksiz karakterleri yok say String karakterlerden devam et
+    lower: true,
+    strict: true,
   });
-  next(); // bir sonraki middware a geçmesi icin next() diyoruz
+  next();
 });
 
 const Course = mongoose.model('Course', CourseSchema);

@@ -43,7 +43,6 @@ exports.getContactPage = (req, res) => {
 };
 
 const sendMailFunction = async (req) => {
-  // htmlden gelen body nin name alanlarının degerlerini alıyorum
   const outputMessage = `
 
    <h1>Mail Details </h1>
@@ -55,18 +54,16 @@ const sendMailFunction = async (req) => {
    <p>${req.body.message}</p>
    `;
 
-  // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true, // true for 465, false for other ports
     auth: {
       user: 'emredmrbs99@gmail.com', // gmail account
-      pass: 'qfplpgsqupcnyurp', // gmail password -- uygulama şifrelerinden yeni şifre aldım
+      pass: 'qfplpgsqupcnyurp', // gmail password
     },
   });
 
-  // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"Smart EDU Contact Form" <emredmrbs99@gmail.com>', // sender address
     to: 'emredmrbs99@gmail.com', // list of receivers
@@ -85,12 +82,10 @@ const sendMailFunction = async (req) => {
 exports.sendMail = async (req, res) => {
   try {
     sendMailFunction(req);
-    req.flash('success', 'We received your message successfully'); // contact templete redirect ediyorum ve bunu orda yakalamam
-    //lazım nasıl yakılıyorum app.js olusturdugum flasMessage değişkeniyle yakalıyorum.
+    req.flash('success', 'We received your message successfully');
 
     res.status(200).redirect('/contact');
   } catch (error) {
-    //req.flash('error', `Something happened! ${err}`);
     req.flash('error', `Something happened!`);
     res.status(400).redirect('/contact');
   }
