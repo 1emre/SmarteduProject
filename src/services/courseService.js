@@ -18,7 +18,7 @@ exports.createCourse = async (name, description, category, user) => {
 const csQuery = (filter) => {
   return {
     $or: [
-      { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } }, // searchden gelen kısmı kucuk harfe cevir
+      { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } },
       { category: filter.category },
     ],
   };
@@ -27,7 +27,7 @@ exports.getFilterCourses = async (filter) => {
   try {
     const courses = Course.find(csQuery(filter))
       .sort('-createDate')
-      .populate('user'); // filter i burda where kosulu olarak kullandıgımız ıcın yazdık
+      .populate('user');
     return courses;
   } catch (error) {
     console.log(`Could not fetch Course ${error}`);
@@ -36,28 +36,17 @@ exports.getFilterCourses = async (filter) => {
 
 exports.getCourseAndUsersWithSlug = async (slug) => {
   try {
-    const course = await Course.findOne({ slug: slug }).populate('user'); // course modelimin icinde user ı modelim refere edildigi icin joinleyip course icinden usera ulaştım.
+    const course = await Course.findOne({ slug: slug }).populate('user');
     return course;
   } catch (error) {
     console.log(`Could not fetch Course and Users ${error}`);
   }
 };
 
-// exports.enrollSerCourse = async (sessionUserID, body) => {
-//   try {
-//     const user = await User.findById(sessionUserID);
-//     await user.courses.push({ _id: body.course_id }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
-//     await user.save();
-//     return user;
-//   } catch (error) {
-//     console.log(`Could not enroll to Course ${error}`);
-//   }
-// };
-
 exports.releaseSerCourse = async (sessionUserID, courseId) => {
   try {
     const user = await User.findById(sessionUserID);
-    user.courses.pull({ _id: courseId }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
+    user.courses.pull({ _id: courseId });
     await user.save();
     return user;
   } catch (error) {
