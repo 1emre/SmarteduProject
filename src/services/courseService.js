@@ -23,6 +23,7 @@ const csQuery = (filter) => {
     ],
   };
 };
+
 exports.getFilterCourses = async (filter) => {
   try {
     const courses = Course.find(csQuery(filter))
