@@ -14,7 +14,7 @@ const searchFilter = (categorySlug, category, query) => {
 
 exports.getAllCourses = async (req, res) => {
   try {
-    const categorySlug = req.query.categories;
+    const categorySlug = req.query.categories; // linkten gelen categories parametresine karsılık değeri alıyorum.
     const query = req.query.search;
     const category = await categoryService.getCategoryWithSlug(categorySlug);
     let filter = searchFilter(categorySlug, category, query);
@@ -72,8 +72,12 @@ exports.createCourse = async (req, res) => {
 
 exports.enrollCourse = async (req, res) => {
   try {
+    // const user = await userService.enrollSerCourse(
+    //   req.session.userID,
+    //   req.body
+    // );
     const user = await User.findById(req.session.userID);
-    await user.courses.push({ _id: req.body.course_id });
+    await user.courses.push({ _id: req.body.course_id }); //course sayfasından enroll edildigin de input alanında gelen name yani course_id ye karsılık gelen course._id yi aldık
     await user.save();
     res.status(200).redirect('/users/dashboard');
   } catch (error) {

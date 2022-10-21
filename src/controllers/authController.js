@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body; //req gelen email ve password aldım
     const user = await userService.getUserWithEmail(email);
     if (user) {
       bcrypt.compare(password, user.password, (err, same) => {
